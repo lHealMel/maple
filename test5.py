@@ -60,19 +60,20 @@ class Maple:
         c = self.T + 18
         return c
 
-    def ary(self, times):
-        f = open("C:/Users/mtn20/Desktop/values.txt", 'w')
+    @staticmethod
+    def ary(times):
         ray = []
         for i in range(times):
             fi = Mp.first()
-            si = Mp.second()
+            se = Mp.second()
             th = Mp.third()
-            arr = list([fi, si, th])
+            arr = list([fi, se, th])
             ray.append(arr)
 
         print(ray)
-        f.write(str(ray))
-        f.close()
+
+        with open("C:/Users/mtn20/Desktop/values.txt", 'a') as f:
+            f.write(str(ray))
 
 
 if __name__ == '__main__':
