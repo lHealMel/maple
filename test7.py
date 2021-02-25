@@ -1,9 +1,21 @@
 import cv2 as cv
 from PIL import ImageGrab
+from pynput import keyboard
 import pytesseract
+import time
+
+
+def press(key):
+    print('Key %s pressed' % key)
+
+
+def release(key):
+    print('Key %s released' % key)
+    if key == keyboard.Key.esc:
+        return 11
+
 
 # 화면 지정 캡쳐 후 저장
-
 isDragging = False
 x1, y1, x2, y2 = -1, -1, -1, -1
 blue, red = (255, 0, 0), (0, 0, 255)
@@ -38,18 +50,18 @@ def onMouse(event, x, y, flags, param):
                 x1, x2 = x2, x1
             if y1 > y2:
                 y1, y2 = y2, y1
-
-            roi = img[y1:y2, x1:x2]
-            # 영역보여주기
-            cv.imshow('capture', roi)
-            # cv.moveWindow('cropped',0,0)
-            # 파일저장
-            cv.imwrite('C:/Users/mtn20/Desktop/save.jpg', roi)
-            print('capture')
-            tset1 = pytesseract.image_to_string(cv.imread('C:/Users/mtn20/Desktop/save.jpg'))
-            tset2 = pytesseract.image_to_string(cv.imread('C:/Users/mtn20/Desktop/save.jpg'), lang='kor')
-            print(tset1)
-            print(tset2)
+            while 1:
+                roi = img[y1:y2, x1:x2]
+                # 파일저장
+                cv.imwrite('C:/Users/mtn20/Desktop/save.jpg', roi)
+                print('capture')
+                tset1 = pytesseract.image_to_string(cv.imread('C:/Users/mtn20/Desktop/save.jpg'))
+                tset2 = pytesseract.image_to_string(cv.imread('C:/Users/mtn20/Desktop/save.jpg'), lang='kor')
+                print(tset1)
+                print(tset2)
+                time.sleep(1)
+                if release(key) == 11:
+                    break
 
 
 # 스크린샷 찍고저장
@@ -62,4 +74,5 @@ img = cv.imread('C:/Users/mtn20/Desktop/screenshot.jpg', cv.IMREAD_COLOR)
 cv.imshow('img', img)
 cv.setMouseCallback('img', onMouse)
 cv.waitKey()
+with keyboard.Listener(on_press=press, on_release=release) as listener: listener.join()
 cv.destroyAllWindows()
